@@ -13,6 +13,11 @@ def start_command(update, context):
 def help_command(update,context):
     update.message.reply_text("USO:\n\n/address [ETHEREUM_ADDRESS]")
 
+def myTurn_command(update,context):
+    user = update.message.from_user['username']
+    newTime = T.howMuchIsLeft(user)
+    update.message.reply_text(newTime)
+
 def handle_message(update, context):
     print(update)
     if update.message.chat['title'] == 'Jefazos EscuelaCryptoES':
@@ -49,6 +54,7 @@ def main():
 
     dp.add_handler(CommandHandler("start", start_command))
     dp.add_handler(CommandHandler("help", help_command))
+    dp.add_handler(CommandHandler("myturn", myTurn_command))
 
     dp.add_handler(MessageHandler(Filters.text, handle_message))
     dp.add_error_handler(error)

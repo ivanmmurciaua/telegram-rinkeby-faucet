@@ -1,5 +1,7 @@
 #from web3.middleware import geth_poa_middleware
 from web3 import Web3
+from datetime import datetime
+
 import constants as keys
 
 def transaction(telegram_user, address_to):
@@ -19,7 +21,7 @@ def transaction(telegram_user, address_to):
     #get the nonce.  Prevents one from sending the transaction twice
     nonce = web3.eth.getTransactionCount(account_1)
 
-    tx = contract_instance.functions.refundUser(
+    tx = contract_instance.functions.payUser(
         telegram_user,
         web3.toChecksumAddress(address_to)
         ).buildTransaction({
@@ -48,3 +50,19 @@ def transaction(telegram_user, address_to):
     else:
         print("\n\n\n\nTransacción fallida")
         return False
+
+def howMuchIsLeft(telegram_user):
+
+    web3 = Web3(Web3.HTTPProvider(keys.RINKEBY_URL))
+
+    #contract conf
+    contract_address = keys.CONTRACT_ADDRESS
+    abi = keys.ABI
+    contract_instance = web3.eth.contract(address=contract_address, abi=abi)
+
+    tx = contract_instance.functions.seeMyInfo(telegram_user).call()
+
+    if tx[3] != 0:
+        return ('Podrás volver a pedir 1 ETH el día ' + datetime.utcfromtimestamp(tx[3]).strftime('%d/%m/%Y a las %H:%M:%S') + ' UTC')
+    else:
+        return ('No estás registrado aún. Consigue tu ETH ya!')
