@@ -1,6 +1,7 @@
 #from web3.middleware import geth_poa_middleware
 from web3 import Web3
-from datetime import datetime
+from re import split
+from datetime import datetime, timedelta
 
 import constants as keys
 
@@ -62,7 +63,23 @@ def howMuchIsLeft(telegram_user):
 
     tx = contract_instance.functions.seeMyInfo(telegram_user).call()
 
-    if tx[3] != 0:
-        return ('Podrás volver a pedir 1 ETH el día ' + datetime.utcfromtimestamp(tx[3]).strftime('%d/%m/%Y a las %H:%M:%S') + ' UTC')
-    else:
+    if tx[3] == 0:
         return ('No estás registrado aún. Consigue tu ETH ya!')
+
+    else:
+        fecha1 = datetime.utcnow()
+        fecha2 = datetime.utcfromtimestamp(tx[3])
+        diferencia = fecha2 - fecha1
+
+        dias = diferencia.days
+        horas = int(split(":", str(timedelta(seconds = diferencia.seconds)))[0])
+        minutos = int(split(":", str(timedelta(seconds = diferencia.seconds)))[1])
+        segundos = int(split(":", str(timedelta(seconds = diferencia.seconds)))[2])
+
+        if ( (dias == 0) & (horas == 0) & (minutos == 0) & (segundos == 0) ):
+            return("El tiempo de espera acabó. Pide tu ETH diario ya! 😎")
+        else:
+            if(dias != 1):
+                return ("Podrás volver a pedir 1 ETH en " + str(dias) + " días, " + str(horas) + " horas, " + str(minutos) + " minutos y " + str(segundos) + " segundos.")
+            else:
+                return ("Podrás volver a pedir 1 ETH en " + str(dias) + " día, " + str(horas) + " horas, " + str(minutos) + " minutos y " + str(segundos) + " segundos.")
