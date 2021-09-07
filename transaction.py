@@ -83,3 +83,7 @@ def howMuchIsLeft(telegram_user):
                 return ("Podrás volver a pedir " + keys.REWARD + " ETH en " + str(dias) + " días, " + str(horas) + " horas, " + str(minutos) + " minutos y " + str(segundos) + " segundos.")
             else:
                 return ("Podrás volver a pedir " + keys.REWARD +" ETH en " + str(dias) + " día, " + str(horas) + " horas, " + str(minutos) + " minutos y " + str(segundos) + " segundos.")
+
+def balance():
+    web3 = Web3(Web3.HTTPProvider(keys.RINKEBY_URL))
+    return web3.fromWei(web3.eth.get_balance(keys.CONTRACT_ADDRESS), 'ether')

@@ -18,6 +18,9 @@ def myTurn_command(update,context):
     newTime = T.howMuchIsLeft(user)
     update.message.reply_text("Hola @" + user + "\n\n" + newTime)
 
+def balance_command(update,context):
+    update.message.reply_text("Balance actual:\n\n" + str(round(T.balance(), 2)) + " ETH")
+
 def handle_message(update, context):
     print(update)
     if update.message.chat['title'] == 'Jefazos EscuelaCryptoES':
@@ -56,6 +59,7 @@ def main():
     dp.add_handler(CommandHandler("start", start_command))
     dp.add_handler(CommandHandler("help", help_command))
     dp.add_handler(CommandHandler("myturn", myTurn_command))
+    dp.add_handler(CommandHandler("balance", balance_command))
 
     dp.add_handler(MessageHandler(Filters.text, handle_message))
     dp.add_error_handler(error)
