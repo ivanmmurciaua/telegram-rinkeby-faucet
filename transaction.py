@@ -26,6 +26,7 @@ def transaction(telegram_user, address_to):
         telegram_user,
         web3.toChecksumAddress(address_to)
         ).buildTransaction({
+        'from' : account_1,
         'nonce': nonce,
         'gas': 2000000,
         'gasPrice': web3.toWei('50', 'gwei')
@@ -42,7 +43,6 @@ def transaction(telegram_user, address_to):
 
     #waiting for transaction
     txn_receipt = web3.eth.wait_for_transaction_receipt(tx_hash)
-    print(txn_receipt)
 
     #response
     if txn_receipt.status:
@@ -76,10 +76,10 @@ def howMuchIsLeft(telegram_user):
         minutos = int(split(":", str(timedelta(seconds = diferencia.seconds)))[1])
         segundos = int(split(":", str(timedelta(seconds = diferencia.seconds)))[2])
 
-        if ( (dias == 0) & (horas == 0) & (minutos == 0) & (segundos == 0) ):
+        if ( dias < 0 ):
             return("El tiempo de espera acabó. Pide tu ETH diario ya! 😎")
         else:
             if(dias != 1):
-                return ("Podrás volver a pedir 1 ETH en " + str(dias) + " días, " + str(horas) + " horas, " + str(minutos) + " minutos y " + str(segundos) + " segundos.")
+                return ("Podrás volver a pedir " + keys.REWARD + " ETH en " + str(dias) + " días, " + str(horas) + " horas, " + str(minutos) + " minutos y " + str(segundos) + " segundos.")
             else:
-                return ("Podrás volver a pedir 1 ETH en " + str(dias) + " día, " + str(horas) + " horas, " + str(minutos) + " minutos y " + str(segundos) + " segundos.")
+                return ("Podrás volver a pedir " + keys.REWARD +" ETH en " + str(dias) + " día, " + str(horas) + " horas, " + str(minutos) + " minutos y " + str(segundos) + " segundos.")

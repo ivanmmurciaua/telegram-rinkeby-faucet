@@ -8,7 +8,7 @@ import transaction as T
 print("Bot enchufado...")
 
 def start_command(update, context):
-    update.message.reply_text('Hola @'+ update.message.from_user['username'] +', \n¡Bienvenid@ al faucet-bot de EscuelaCryptoES! 😎😁\n\nSi quieres recibir 1 ETH en la red de Rinkeby y empezar a tope a programar, escribe /address y tu dirección de Ethereum a continuación.\nEj: /address 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045 (Cambia esta dirección, si no estarás enviando 1 ETH al mismisimo Vitalik Buterin 🤪🤫) \n\n ¡Mucha suerte en tu proyecto!👨‍💻👩‍💻')
+    update.message.reply_text("Hola @"+ update.message.from_user['username'] +", \n¡Bienvenid@ al faucet-bot de EscuelaCryptoES! 😎😁\n\nSi quieres recibir " +  str(keys.REWARD) +" ETH en la red de Rinkeby y empezar a tope a programar, escribe /address y tu dirección de Ethereum a continuación.\nEj: /address 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045 (Cambia esta dirección, si no estarás enviando " +  str(keys.REWARD) + " ETH al mismisimo Vitalik Buterin 🤪🤫) \n\n ¡Mucha suerte en tu proyecto!👨‍💻👩‍💻")
 
 def help_command(update,context):
     update.message.reply_text("USO:\n\n/address [ETHEREUM_ADDRESS]")
@@ -28,7 +28,7 @@ def handle_message(update, context):
             user = update.message.from_user['username']
             user_address = response
             
-            update.message.reply_text("Enviando 1 ETH de Rinkeby a @" + user)
+            update.message.reply_text("Enviando " + str(keys.REWARD) +" ETH de Rinkeby a @" + user)
             transaction_response = T.transaction(user, user_address)
             
             if transaction_response:

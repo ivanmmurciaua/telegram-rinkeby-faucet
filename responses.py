@@ -1,6 +1,8 @@
 from datetime import date, datetime
 from re import split
 
+import constants as keys
+
 def sample_responses(input_text):
     user_message = str(input_text).lower()
 
@@ -11,4 +13,4 @@ def sample_responses(input_text):
     if user_message in ("gracias","Gracias","GRACIAS","thx","Thx","Thanks","Grazie"):
       return "A ti crack"
     
-    return "Escribe tu dirección de Ethereum para recibir 1 ETH en Rinkeby"
+    return "Escribe tu dirección de Ethereum para recibir " + keys.REWARD + " ETH en Rinkeby"

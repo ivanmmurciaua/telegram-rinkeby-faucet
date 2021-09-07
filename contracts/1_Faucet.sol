@@ -57,12 +57,12 @@ contract RinkebyECESFaucet is Ownable {
     /**
      * @dev cooldownTime put to 1 days. One user cannot take more than 1 ETH daily
      */
-    uint private cooldownTime = 1 days;
+    uint private cooldown = 1 days;
     
     /**
      * @dev reward in wei
      */
-     uint private reward = 1000000000000000000;
+     uint private _reward = 1000000000000000000;
     
     /**
      * 
@@ -70,10 +70,10 @@ contract RinkebyECESFaucet is Ownable {
      * 
      */
     struct User{
-        string telegram_User;
-        address lastAddress;
-        bool stored;
-        uint64 readyTime;
+        string telegram;
+        address last_Address;
+        bool Stored;
+        uint64 ready;
     }
     
     /**
@@ -87,11 +87,11 @@ contract RinkebyECESFaucet is Ownable {
      * 
      * @dev Updates cooldownTime state variable ;; for 1 day 86400
      * 
-     * @param _days is the new time to set cooldownTime
+     * @param __days is the new time to set cooldownTime
      * 
      */
-    function setCooldownTime(uint _days) public onlyOwner {
-        cooldownTime = _days;
+    function setCooldownTime(uint __days) public onlyOwner {
+        cooldown = __days;
     }
     
     /**
@@ -102,18 +102,18 @@ contract RinkebyECESFaucet is Ownable {
      * 
      */
     function getCooldownTime() external view onlyOwner returns(uint) {
-        return cooldownTime;
+        return cooldown;
     }
     
     /**
      * 
      * @dev Updates reward state variable ;; 1000000000000000000 for 1 ether
      * 
-     * @param _wei is the new reward
+     * @param __wei is the new reward
      * 
      */
-    function setReward(uint _wei) public onlyOwner {
-        reward = _wei;
+    function setReward(uint __wei) public onlyOwner {
+        _reward = __wei;
     }
     
     /**
@@ -124,48 +124,50 @@ contract RinkebyECESFaucet is Ownable {
      * 
      */
     function getReward() external view onlyOwner returns(uint) {
-        return reward;
+        return _reward;
     }
 
     /**
      * 
      * @notice Function to pay a user with the set reward
      * 
-     * @param _user is the Telegram user name
-     * @param _to is the user's Ethereum address 
+     * @param __user is the Telegram user name
+     * @param __to is the user's Ethereum address 
      * 
      */
-    function payUser(string memory _user, address _to) external payable {
-        User storage u = users[_user];
+    function payUser(string memory __user, address __to) external payable {
+        User storage u = users[__user];
         
-        if(!u.stored){
+        if(!u.Stored){
             // Not stored yet
-            u.lastAddress = _to;
-            u.telegram_User = _user;
-            u.stored = true;
+            u.last_Address = __to;
+            u.telegram = __user;
+            u.Stored = true;
         }
         
-        if(u.lastAddress != _to){
-            u.lastAddress = _to;
+        if(u.last_Address != __to){
+            u.last_Address = __to;
         }
         
-        require(_ethDeployed1Day(_user), "Solo puedes conseguir ETH cada 24 horas");
+        require(_ethDeployed1Day(__user), "Solo puedes conseguir ETH cada 24 horas");
         
         // Pay
-        address payable chosenOne = payable(_to); 
-        chosenOne.transfer(reward);
-        u.readyTime = uint64(block.timestamp + cooldownTime);
+        address payable chosenOne = payable(__to); 
+        chosenOne.transfer(_reward);
+        u.ready = uint64(block.timestamp + cooldown);
     }
     
     /**
      * 
      * @notice This function lets you know if you are ready to 
      * receive the set reward again
+     *
+     * @param __user is the Telegram user name
      * 
      */
-    function _ethDeployed1Day(string memory _user) internal view returns (bool) {
-        User storage u = users[_user];
-        return u.readyTime <= block.timestamp;
+    function _ethDeployed1Day(string memory __user) internal view returns (bool) {
+        User storage u = users[__user];
+        return u.ready <= block.timestamp;
     }
     
     /**
@@ -175,11 +177,13 @@ contract RinkebyECESFaucet is Ownable {
      * @dev Later, in frontend we transform the waiting time
      * into an understandable language.
      * 
+     * @param __user is the Telegram user name
+     *
      * @return User info in tuple format
      * 
      */
-    function seeMyInfo(string memory _user) external view returns(User memory){
-        User storage u = users[_user];
+    function seeMyInfo(string memory __user) external view returns(User memory){
+        User storage u = users[__user];
         return u;
     }
     
