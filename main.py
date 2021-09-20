@@ -18,10 +18,10 @@ def keyboardCreate(update):
     Args:
         update (Any): message info state
     """
-    keyboard = [[InlineKeyboardButton(text='Únete al grupo', url='https://t.me/joinchat/KXjmNhHOxvk1NmE0')]]
+    keyboard = [[InlineKeyboardButton(text='Únete al grupo', url=keys.GROUP_URL)]]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    update.message.reply_text("Para usar este bot debes estar en el subgrupo de desarrolladores de @EscuelaCryptoES", reply_markup = reply_markup)
+    update.message.reply_text("Para usar este bot debes estar en el grupo de @EscuelaCryptoES", reply_markup = reply_markup)
 
 def goToMD(update):
     """==== If the bot is called from another place that is not MD, returns this message ====
@@ -43,7 +43,7 @@ def checkUser(user):
     params = { "chat_id" : keys.GROUP_ID, "user_id" : user, "format" : json }
     response = requests.get("https://api.telegram.org/bot" + keys.API_KEY + "/getChatMember", params=params) #  Get call with params to check it
 
-    return (response.json()["ok"] & (response.json()["result"]["status"] == 'member'))
+    return (response.json()["ok"] & ((response.json()["result"]["status"] == 'member') | (response.json()["result"]["status"] == 'creator') | (response.json()["result"]["status"] == 'administrator')))
 
 def start_command(update, context):
     """==== User greeting ====
@@ -53,7 +53,7 @@ def start_command(update, context):
         context (Any): bot message context
     """
     if(checkUser(update.message.from_user['id'])):
-        if update.message.chat['title'] != 'Rinkeby ETH Delivery Group': #  If call is not from MD -> ***
+        if update.message.chat['title'] != 'EscuelaCryptoES': #  If call is not from MD -> ***
             update.message.reply_text("Hola @"+ update.message.from_user['username'] +", \n¡Bienvenid@ al faucet-bot de EscuelaCryptoES! 😎😁\n\nSi quieres recibir " +  str(keys.REWARD) +" ETH en la red de Rinkeby y empezar a tope a programar, escribe /address y tu dirección de Ethereum a continuación.\nEj: /address 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045 (Cambia esta dirección, si no estarás enviando " +  str(keys.REWARD) + " ETH al mismisimo Vitalik Buterin 🤪🤫) \n\n ¡Mucha suerte en tu proyecto!👨‍💻👩‍💻")
         else:
             goToMD(update)
@@ -68,7 +68,7 @@ def help_command(update,context):
         context (Any): bot message context
     """
     if(checkUser(update.message.from_user['id'])):
-        if update.message.chat['title'] != 'Rinkeby ETH Delivery Group': #   ***
+        if update.message.chat['title'] != 'EscuelaCryptoES': #   ***
             update.message.reply_text("USO:\n\n/address [ETHEREUM_ADDRESS]")
         else:
             goToMD(update)
@@ -83,7 +83,7 @@ def myTurn_command(update,context):
         context (Any): bot message context
     """
     if(checkUser(update.message.from_user['id'])):
-        if update.message.chat['title'] != 'Rinkeby ETH Delivery Group': #   ***
+        if update.message.chat['title'] != 'EscuelaCryptoES': #   ***
             user = update.message.from_user['username']
             newTime = T.howMuchIsLeft(user)
             update.message.reply_text("Hola @" + user + "\n\n" + newTime)
@@ -100,7 +100,7 @@ def balance_command(update,context):
         context (Any): bot message context
     """
     if(checkUser(update.message.from_user['id'])):
-        if update.message.chat['title'] != 'Rinkeby ETH Delivery Group': #   ***
+        if update.message.chat['title'] != 'EscuelaCryptoES': #   ***
             update.message.reply_text("Balance actual:\n\n" + str(round(T.balance(), 2)) + " ETH")
         else:
             goToMD(update)
@@ -117,7 +117,7 @@ def handle_message(update, context):
     print(update)
 
     if(checkUser(update.message.from_user['id'])):
-        if update.message.chat['title'] != 'Rinkeby ETH Delivery Group': #   ***
+        if update.message.chat['title'] != 'EscuelaCryptoES': #   ***
             text = str(update.message.text).lower()
             response = R.sample_responses(text) #  Return the processed string
 
@@ -165,7 +165,7 @@ def main():
 
     #  Message handler
     dp.add_handler(MessageHandler(Filters.text, handle_message))
-    
+
     #  Error handler
     dp.add_error_handler(error)
 
