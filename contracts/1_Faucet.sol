@@ -135,7 +135,7 @@ contract RinkebyECESFaucet is Ownable {
      * @param __to is the user's Ethereum address 
      * 
      */
-    function payUser(string memory __user, address __to) external payable {
+    function payUser(string memory __user, address __to) external payable onlyOwner {
         User storage u = users[__user];
         
         if(!u.Stored){
@@ -152,9 +152,9 @@ contract RinkebyECESFaucet is Ownable {
         require(_ethDeployed1Day(__user), "Solo puedes conseguir ETH cada 24 horas");
         
         // Pay
+        u.ready = uint64(block.timestamp + cooldown);
         address payable chosenOne = payable(__to); 
         chosenOne.transfer(_reward);
-        u.ready = uint64(block.timestamp + cooldown);
     }
     
     /**
